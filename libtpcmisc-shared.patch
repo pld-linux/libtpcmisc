@@ -1,0 +1,47 @@
+--- libtpcmisc-1.3.0/Makefile.orig	2007-09-07 13:22:34.000000000 +0200
++++ libtpcmisc-1.3.0/Makefile	2008-01-20 11:31:45.948766780 +0100
+@@ -37,8 +37,8 @@
+ SOURCES 	= substitutions.c idcrypt.c intex.c petc99.c studynr.c swap.c halflife.c \
+ 		  ift.c iftfile.c iftsrch.c decpoint.c quots.c \
+                   memory_handler.c libtpcmiscv.c
+-OBJECTS 	= ${SOURCES:.c=.o}
+-LIBARCHIVE	= ${LIBRARY}.a
++OBJECTS 	= ${SOURCES:.c=.lo}
++LIBARCHIVE	= ${LIBRARY}.la
+ DOXYGEN		= doxygen
+ CC		= gcc
+ CFLAGS 		= -std=gnu99 -s -Wall -O2 ${INCLUDE} ${ANSI}
+@@ -60,9 +60,12 @@
+ # ------------- Compilation: --------------------------------------------------#
+ compile: ${LIBARCHIVE} ${LIBEXEC}
+ 
++%.lo: %.c
++	libtool --tag=CC --mode=compile $(CC) $(CFLAGS) -c $<
++
+ # Compile library
+ ${LIBARCHIVE}: ${OBJECTS}
+-	${AR} -rvs ${LIBARCHIVE} ${OBJECTS}
++	libtool --tag=CC --mode=link $(CC) $(LDFLAGS) $(CFLAGS) -o $@ $^ -lm -rpath $(PET_LIB)
+ 
+ # Compile executable
+ ${LIBEXEC}: ${LIBARCHIVE} ${LIBRARY}.c
+@@ -82,7 +85,7 @@
+ install: libversion libinstall execinstall
+ 
+ libinstall: ${LIBARCHIVE}
+-	${ADDDATE} -i=${LIBRARY}.version -o=${PET_LIB} -nodate ${LIBARCHIVE}
++	libtool --tag=CC --mode=install install $(LIBARCHIVE) $(DESTDIR)$(PET_LIB)
+ 
+ execinstall: ${LIBEXEC}
+ 	${ADDDATE} -i=${LIBRARY}.version -o=${PET_BIN} -nodate -copy ${LIBEXEC}
+--- libtpcmisc-1.3.0/memory_handler.c.orig	2007-09-07 13:22:33.000000000 +0200
++++ libtpcmisc-1.3.0/memory_handler.c	2008-01-20 11:47:17.861873481 +0100
+@@ -60,7 +60,7 @@
+ 
+ #include "include/memory_handler.h"
+ 
+-extern int DEBUG;
++int DEBUG __attribute__((weak));
+ 
+ 
+ /** Structure for one-way list to keep track of used memory */
