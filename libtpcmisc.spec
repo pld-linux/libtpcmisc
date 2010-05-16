@@ -9,6 +9,7 @@ Source0:	http://www.turkupetcentre.net/software/libsrc/%{name}_%(echo %{version}
 # Source0-md5:	2ef27f792615bbc2600c9254be79c6a5
 Patch0:		%{name}-shared.patch
 URL:		http://www.turkupetcentre.net/software/libdoc/libtpcmisc/
+BuildRequires:	unzip
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
